@@ -24,3 +24,7 @@ df$valeur<-as.integer(df$valeur)
 df2= df[df$variable	=="prixMoyen",]
 pl2=ggplot(df2, aes(x=annee, y=valeur,fill=arrondissement))+geom_bar(stat = "identity")+ggtitle("Prix moyen de tout type d'habitations en Belgique par an")+xlab("Années")+ylab("Prix Moyen")
 pl2
+
+df3=df[df$variable=="prixMoyen",]
+pl3=ggplot(df3,aes(x=periode,y=valeur))+geom_line()+xlab("periode")+facet_wrap(arrondissement~.)+ylab("Prix Moyen")+ggtitle("Prix moyen sur les périodes")
+pl3

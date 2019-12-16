@@ -28,3 +28,13 @@ pl2
 df3=df[df$variable=="prixMoyen",]
 pl3=ggplot(df3,aes(x=periode,y=valeur))+geom_line()+xlab("periode")+facet_wrap(arrondissement~.)+ylab("Prix Moyen")+ggtitle("Prix moyen sur les périodes")
 pl3
+
+install.packages('dplyr')
+library('dplyr')
+df3_s1s2 = df3[df3$periode == "Q1" | df3$periode == "Q2" | df3$periode == "Q3" | df3$periode == "Q4", ]
+grp <- group_by(df3_s1s2, annee,periode)
+df4 = summarise(grp, min=min(valeur, na.rm=TRUE), max=max(valeur, na.rm=TRUE))
+df4 = summarise(grp, moyenne=mean(valeur, na.rm=TRUE), mediane=median(valeur, na.rm=TRUE), max=max(valeur, na.rm=TRUE), min=min(valeur, na.rm=TRUE) )
+pl4=ggplot(df4,aes(x=factor(periode),y=mediane, group = 1))+geom_line()
+pl4+facet_wrap(annee~.)
+#commentaire

@@ -1,3 +1,5 @@
+#install.packages('dplyr')
+library('dplyr')
 library("ggplot2")
 df = read.csv2("C:/Users/DELL/Desktop/Master1 STIC/Visualisation des données de l'information/data project.csv", sep=",")
 
@@ -25,16 +27,24 @@ df2= df[df$variable	=="prixMoyen",]
 pl2=ggplot(df2, aes(x=annee, y=valeur,fill=arrondissement))+geom_bar(stat = "identity")+ggtitle("Prix moyen de tout type d'habitations en Belgique par an")+xlab("Années")+ylab("Prix Moyen")
 pl2
 
+# Graph 3
 df3=df[df$variable=="prixMoyen",]
-pl3=ggplot(df3,aes(x=periode,y=valeur))+geom_line()+xlab("periode")+facet_wrap(arrondissement~.)+ylab("Prix Moyen")+ggtitle("Prix moyen sur les périodes")
+df3=df3[df3$annee>2009,]
+
+df3_s = df3[df3$periode == "S1" | df3$periode == "S2", ]
+grp <- group_by(df3_s, annee, periode,arrondissement)
+df3_s = summarise(grp, min=min(valeur, na.rm=TRUE), max=max(valeur, na.rm=TRUE))
+df3_s = summarise(grp, moyenne=mean(valeur, na.rm=TRUE), mediane=median(valeur, na.rm=TRUE), max=max(valeur, na.rm=TRUE), min=min(valeur, na.rm=TRUE) )
+pl3=ggplot(df3_s,aes(x=periode,y=moyenne,group=annee, color=annee))+geom_point()+xlab("periode")+facet_wrap(arrondissement~.)+ylab("Prix Moyen")+ggtitle("Evolution du prix moyen au cours des semestres selon les arrondissements")
 pl3
 
-install.packages('dplyr')
-library('dplyr')
-df3_s1s2 = df3[df3$periode == "Q1" | df3$periode == "Q2" | df3$periode == "Q3" | df3$periode == "Q4", ]
-grp <- group_by(df3_s1s2, annee,periode)
+# Graph 4 par période par année
+df3=df[df$variable=="nbTotalTransactions",]
+df3=df3[df3$annee>2009,]
+
+df3_q = df3[df3$periode == "Q1" | df3$periode == "Q2" | df3$periode == "Q3" | df3$periode == "Q4", ]
+grp <- group_by(df3_q, annee, periode, typeBien)
 df4 = summarise(grp, min=min(valeur, na.rm=TRUE), max=max(valeur, na.rm=TRUE))
 df4 = summarise(grp, moyenne=mean(valeur, na.rm=TRUE), mediane=median(valeur, na.rm=TRUE), max=max(valeur, na.rm=TRUE), min=min(valeur, na.rm=TRUE) )
-pl4=ggplot(df4,aes(x=factor(periode),y=mediane, group = 1))+geom_line()
-pl4+facet_wrap(annee~.)
-#commentaire
+pl4=ggplot(df4,aes(x=periode,y=mediane, group=typeBien, color=typeBien))+geom_line()+facet_wrap(annee~.)+ylab("nombre total de transactions")+ggtitle("Evolution du nombre total médian de transactions par quadrimestre")
+pl4
